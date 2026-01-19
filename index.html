@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行動経済学 予想問題クイズ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .question-type {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .type-correct { background: #e3f2fd; color: #1976d2; }
+        .type-incorrect { background: #fce4ec; color: #c2185b; }
+        .type-fill { background: #e8f5e9; color: #388e3c; }
+        .question-number {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.6;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        .option.selected {
+            border-color: #667eea;
+            background: #ede7f6;
+        }
+        .option.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        .option.disabled {
+            cursor: default;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .explanation {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 12px 12px 0;
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+        }
+        .explanation h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .explanation p {
+            line-height: 1.8;
+            color: #555;
+        }
+        .result-card {
+            text-align: center;
+            display: none;
+        }
+        .result-card.show {
+            display: block;
+        }
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .score-label {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .result-message {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .start-screen {
+            text-align: center;
+        }
+        .start-screen h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .start-screen p {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+        .quiz-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .quiz-info li {
+            margin: 10px 0;
+            color: #555;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .fill-blank {
+            display: inline-block;
+            border-bottom: 2px solid #667eea;
+            min-width: 80px;
+            padding: 2px 10px;
+            margin: 0 5px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .answer-status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .answer-status.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .answer-status.incorrect {
+            background: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card start-screen" id="startScreen">
+            <h1>行動経済学 予想問題クイズ</h1>
+            <p class="subtitle">早稲田大学 行動経済学講義</p>
+
+            <div class="quiz-info">
+                <h3>出題範囲</h3>
+                <ul style="text-align: left; padding-left: 20px;">
+                    <li>ナッジの概要（NUDGES, BASIC, FEAST）</li>
+                    <li>フィールド実験とEBPM</li>
+                    <li>情報提供ナッジ・目的明示ナッジ</li>
+                    <li>社会的規範ナッジ・デフォルトナッジ</li>
+                    <li>感情・アイデンティティナッジ</li>
+                    <li>スラッジとダークパターン</li>
+                    <li>リバタリアンパターナリズム</li>
+                </ul>
+            </div>
+
+            <p>全20問 / 正文選択・誤文選択・語句選択問題</p>
+            <button class="btn btn-primary" onclick="startQuiz()">クイズを開始する</button>
+        </div>
+
+        <div class="card hidden" id="quizCard">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="question-number" id="questionNumber"></div>
+            <div class="question-type" id="questionType"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="options"></div>
+
+            <div class="explanation" id="explanation">
+                <div class="answer-status" id="answerStatus"></div>
+                <h4>解説</h4>
+                <p id="explanationText"></p>
+            </div>
+
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>次の問題へ</button>
+        </div>
+
+        <div class="card result-card" id="resultCard">
+            <h2>クイズ完了!</h2>
+            <div class="score" id="finalScore"></div>
+            <div class="score-label">正解数</div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <script>
+const questions = [
+    // 第4講: ナッジの概要
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "NUDGESに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "NUDGESのNはNorm（規範）を表し，社会的な規範を用いて行動変容を促すことを指す。",
+            "NUDGESのDはDefault（デフォルト）を表し，「選択をしない」という判断をした時にどうなるかを工夫することを指す。",
+            "NUDGESのEはEducation（教育）を表し，人々に正しい知識を与えることで行動変容を促すことを指す。",
+            "NUDGESのSはSanction（制裁）を表し，望ましくない行動に対してペナルティを与えることを指す。"
+        ],
+        answer: 1,
+        explanation: "NUDGESは，N（iNcentive：インセンティブ構造），U（Understanding mappings：対応づけの理解），D（Default：デフォルト），G（Give feedback：フィードバックの提供），E（Expect error：エラーの予見），S（Structure complex choices：複雑な選択の構造化）の頭文字です。Dのデフォルトは，選択をしない場合の初期値を工夫することで行動変容を促す手法です。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "FEASTフレームワークに関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "Fは「Fun（楽しさ）」を表し，楽しくなるような仕掛けをすることで行動変容を促す。",
+            "Eは「Easy（簡単）」を表し，デフォルトの設定や面倒な要素を取り除くことを指す。",
+            "Aは「Attractive（魅力的）」を表し，注意を引きつける設計や報酬・処罰の効果的な設計を指す。",
+            "Tは「Trust（信頼）」を表し，信頼できる情報源からメッセージを発信することを指す。"
+        ],
+        answer: 3,
+        explanation: "FEASTのTは「Timely（タイムリー）」を表します。最も受け入れやすいタイミングで刺激する，直近の費用・利益を考える，出来事への対応の計画を支援するといった内容です。「Trust（信頼）」はFEASTの要素ではありません。"
+    },
+    // 第5講: EBPM
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "エビデンストライアングルに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "コホート研究はランダム化比較試験（RCT）よりもエビデンスレベルが高い。",
+            "メタアナリシスは単一のRCTよりもエビデンスレベルが低い。",
+            "ランダム化比較試験（RCT）は，介入群と対照群をランダムに割り当てることで因果効果を識別する方法である。",
+            "専門家の意見はシステマティック・レビューと同等のエビデンスレベルを持つ。"
+        ],
+        answer: 2,
+        explanation: "エビデンストライアングルでは，最高位はシステマティック・レビュー/メタアナリシス，次いでRCT，コホート研究，症例対照研究，症例報告，最下位がデータに基づかない専門家の意見となっています。RCTは因果関係を特定する力が最も強い研究手法です。"
+    },
+    // 第6講: 情報提供ナッジ
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "情報提供ナッジに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "八王子市のがん検診実験では，「検診を受ければ来年もキットを送る」というゲイン・フレームのメッセージが最も効果的だった。",
+            "八王子市のがん検診実験では，損失回避性を活用した「受診しないとキットは送付されなくなる」というロス・フレームのメッセージが受診率を約7.2%ポイント向上させた。",
+            "カロリー表示の義務化は，消費者の行動には影響を与えるが，レストラン側のメニュー構成には影響を与えない。",
+            "情報提供ナッジは強制力を伴うため，他のナッジ手法よりも介入強度が強い。"
+        ],
+        answer: 1,
+        explanation: "八王子市の大腸がん検診実験では，損失フレーム（「受診しないと来年は検査キットは送付されなくなります」）がゲインフレームよりも受診率を7.2%ポイント高める結果となりました。これは損失回避性というプロスペクト理論の原理を活用した典型例です。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "MINDSPACEフレームワークは，行動に影響を与える9つの心理的メカニズムを整理したものである。このうち，Mは（ A ）を表し，誰が情報を伝達するかに大きく影響されることを示す。また，Dは（ B ）を表し，事前設定されたオプションに従う傾向を指す。\n\n選択肢：①Messenger ②Money ③Defaults ④Decisions ⑤Motivation ⑥Design",
+        options: [
+            "A：① B：③",
+            "A：② B：④",
+            "A：⑤ B：⑥",
+            "A：① B：④"
+        ],
+        answer: 0,
+        explanation: "MINDSPACEのMはMessenger（伝達者）で，誰が情報を伝達するかに大きく影響されることを示します。DはDefaults（デフォルト）で，事前設定されたオプションに従う傾向を指します。MINDSPACEは，M（Messenger），I（Incentives），N（Norms），D（Defaults），S（Salience），P（Priming），A（Affect），C（Commitments），E（Ego）の9つの要素から構成されます。"
+    },
+    // 第7講: 目的明示ナッジ
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "目的明示ナッジに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "If-Thenプランは，目標設定のみを行う手法であり，具体的な行動計画は含まない。",
+            "実行意図（Implementation Intentions）は，「いつ・どこで・どのように」行動するかを具体的に決めることで，意図と行動のギャップを埋める手法である。",
+            "価値肯定ナッジは，金銭的インセンティブを与えることで行動変容を促す手法である。",
+            "インフルエンザワクチン接種の実験では，接種日付のみを記入させる方が，日付と時刻を記入させるより効果的だった。"
+        ],
+        answer: 1,
+        explanation: "実行意図（Implementation Intentions）は，Peter Gollwitzerが提唱した理論で，「If（もし）状況Yが起きたら，Then（その時）私は行動Zを実行する」という形式で具体的な計画を立てることで，意図と行動のギャップを埋めます。インフルエンザワクチンの実験では，日付と時刻の両方を記入させた群が最も接種率が高くなりました。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "SMART目標に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "Sは「Specific（具体的）」を表し，誰が読んでも同じ意味に捉えられるくらい明確であることを求める。",
+            "Mは「Measurable（測定可能）」を表し，達成できたかどうかを数字で判断できることを求める。",
+            "Aは「Attractive（魅力的）」を表し，目標が魅力的で達成したくなるものであることを求める。",
+            "Tは「Time-related（期限設定）」を表し，いつまでにやるかスケジュールを引くことを求める。"
+        ],
+        answer: 2,
+        explanation: "SMARTのAは「Assignable（割当可能）」を表し，個人からなる特定の集団に割り当てることができることを意味します。「Attractive（魅力的）」ではありません。SMARTは，S（Specific），M（Measurable），A（Assignable），R（Realistic），T（Time-related）の5つの要素から構成されます。"
+    },
+    // 第8講: 社会的規範ナッジ
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "社会的選好に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "バンドワゴン効果とは，他人と違うものが欲しいという心理で，限定商品を好む傾向を指す。",
+            "スノッブ効果とは，多くの人が選んでいるものに引き寄せられる心理を指す。",
+            "ヴェブレン効果とは，価格が高いほど需要が増える現象で，高級品による自己顕示欲を反映する。",
+            "社会的証明とは，政府や権威者の推奨に従う傾向を指す。"
+        ],
+        answer: 2,
+        explanation: "ヴェブレン効果は，価格が高いほどその商品がより高いステータスを象徴すると考え，需要が増える現象です。バンドワゴン効果は多くの人が選んでいるものに引き寄せられる効果，スノッブ効果は他人と違うものが欲しいという効果です。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "社会的規範ナッジに関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "英国BITの納税通知実験では，「あなたの地域の90％以上の人がすでに税金を支払っています」というメッセージで納税率が上昇した。",
+            "Opowerの電力レポートでは，近隣世帯との電力消費量を比較表示することで，平均2〜3％の省エネ効果があった。",
+            "化石の森国立公園の実験では，「多くの来園者が化石を持ち去っています」という記述的規範を強調したところ，盗難率が低下した。",
+            "ホテルのタオル再利用実験では，「この部屋に泊まったお客様の多くが再利用しました」というメッセージが最も効果的だった。"
+        ],
+        answer: 2,
+        explanation: "化石の森国立公園の実験では，「多くの来園者が化石を持ち去っています」という記述的規範を強調した看板を立てたところ，むしろ盗難率が約2.9%から約7.9%に増加しました。望ましくない行動を多数派として提示すると，かえってその行動が正当化されるリスクがあります。"
+    },
+    // 第9講: デフォルトナッジ
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "デフォルト効果に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "臓器提供研究では，オプトイン国（ドイツ等）の登録率が約82-99%，オプトアウト国（オーストリア等）では約4-28%だった。",
+            "臓器提供研究では，オプトイン国（ドイツ等）の登録率が約4-28%，オプトアウト国（オーストリア等）では約82-99%だった。",
+            "デフォルト効果は，ユーザーが積極的に選択を行う場合に最も強く働く。",
+            "デフォルト効果のメタ分析による効果量はd=0.10程度と非常に小さい。"
+        ],
+        answer: 1,
+        explanation: "Johnson & Goldstein (2003)の臓器提供研究では，オプトイン国（ドイツ等）の登録率は約4-28%，オプトアウト国（オーストリア等）では約82-99%と大きな差がありました。Jachimowicz et al.（2019）のメタ分析では，デフォルト効果の効果量はd=0.68と報告されています。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "プロスペクト理論では，人々は（ A ）からの変化で価値を感じ，同額の損失は利得より約2〜2.5倍大きく感じられる（ B ）という特性を持つとされる。\n\n選択肢：①参照点 ②基準値 ③損失回避性 ④現状維持バイアス ⑤保有効果 ⑥フレーミング効果",
+        options: [
+            "A：① B：③",
+            "A：② B：④",
+            "A：① B：⑤",
+            "A：② B：⑥"
+        ],
+        answer: 0,
+        explanation: "プロスペクト理論の重要な特性として，参照点依存性（絶対的な結果ではなく参照点からの変化で価値を感じる）と損失回避性（損失は同等の利得より約2〜2.5倍大きく感じられる）があります。これらはKahneman & Tversky (1979)によって提唱されました。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "クエリ理論に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "クエリ理論では，選好は事前に決まっており，記憶への問いかけは選好に影響しないとされる。",
+            "クエリ理論では，すべての選択肢に関する情報が同時に処理されるとされる。",
+            "クエリ理論では，デフォルト選択肢の肯定的側面が先に想起されるため，デフォルトが選ばれやすくなると説明される。",
+            "クエリ理論は，プロスペクト理論の一部として発展した理論である。"
+        ],
+        answer: 2,
+        explanation: "クエリ理論（Query Theory）では，選好は事前に決まっているのではなく，内的質問（クエリ）への回答によって構築されるとされます。通常，デフォルト選択肢の利点や維持すべき理由が最初に想起され（Order仮説），後から想起される他の選択肢の利点が抑制されるため，デフォルトが選ばれやすくなります。"
+    },
+    // 第10講: 感情・アイデンティティナッジ
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "感情ナッジに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "感情ナッジはシステム2に働きかけるため，効果が現れるまで時間がかかる。",
+            "タバコパッケージの警告画像は，テキストのみの表示よりもリスク認知や禁煙の意図を高める効果がある。",
+            "感情ナッジは知識提供型の介入よりも心理的インパクトが弱い。",
+            "感情ナッジは倫理的問題が少ないため，どのような場面でも積極的に使用すべきである。"
+        ],
+        answer: 1,
+        explanation: "感情ナッジはシステム1に働きかけるため，すぐに自発的な反応を引き出すことが可能です。タバコパッケージの警告画像（黒ずんだ肺や虫歯の写真など）は，テキストのみの表示よりもリスク認知や禁煙の意図を有意に高める効果が確認されています。ただし，過度な恐怖喚起は操作性の問題があり，倫理的配慮が必要です。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "アイデンティティナッジに関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "アメリカの選挙実験では，「投票する人（voter）」という名詞で尋ねる方が，「投票に行く（voting）」という動詞で尋ねるより投票率が向上した。",
+            "ノルウェーのサッカー場実験では，アウェイチームのサポーターに自チームのロゴで訴求することで分別率が向上した。",
+            "ノルウェーのサッカー場実験では，アウェイチームのサポーターにホームチームのロゴで訴求すると分別率が向上した。",
+            "教育現場では，「あなたは数学が得意な人だ」という自己認識を促すメッセージで試験成績が向上した事例がある。"
+        ],
+        answer: 2,
+        explanation: "ノルウェーのサッカー場実験では，アウェイチームのサポーターにホームチームのロゴで訴求するとかえって反発を招き，分別行動が低下する傾向が見られました。自チーム（内集団）のアイデンティティに訴えかけることが効果的であり，外集団のロゴを使うと心理的リアクタンスが生じます。"
+    },
+    // 第11講: スラッジとダークパターン
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "ダークパターンの類型に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "ローチ・モーテル（Roach Motel）とは，「入るのは簡単だが出るのは難しい」設計を指す。",
+            "スニーキング（Sneaking）とは，ユーザーの同意なく商品をカートに追加するなど，重要情報を隠蔽する手法を指す。",
+            "ナギング（Nagging）とは，「残りわずか」等の偽の緊急性を演出して購入を急がせる手法を指す。",
+            "コンファーム・シェイミング（Confirmshaming）とは，拒否する際に羞恥心を抱かせる選択肢を表示する手法を指す。"
+        ],
+        answer: 2,
+        explanation: "「残りわずか」等で偽の緊急性を演出する手法は「偽の緊急性（Fake Urgency）」や「偽の希少性（Fake Scarcity）」と呼ばれます。ナギング（Nagging）は，アプリの通知許可や評価依頼などをしつこく何度も表示し，ユーザーを根負けさせる「しつこい要求」のことを指します。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "スラッジに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "スラッジは常に意図的に設計されたものである。",
+            "スラッジとナッジのメタ分析では，スラッジの効果量はナッジの半分程度だった。",
+            "スラッジは，結果として望ましい行動や権利行使を不必要な摩擦で阻害する設計を指す。",
+            "スラッジは公共政策の領域にのみ存在し，民間企業では見られない。"
+        ],
+        answer: 2,
+        explanation: "スラッジは「意図的ではない場合も含まれる」設計上の摩擦であり，結果として望ましい行動を阻害します。メタ分析では，ナッジの効果量d=0.29に対し，スラッジの効果量はd=0.26とほぼ同等でした。公共・民間を問わず，給付金申請の煩雑さからサブスクリプション解約の困難さまで広範に存在します。"
+    },
+    // 第12講: 倫理的課題
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "Ethical Design Frameworkに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "透明性原則では，すべての費用・条件を専門用語で詳細に記載することが求められる。",
+            "対称性原則では，サービスへの登録と解約が同等の容易さで行えることが求められる。",
+            "誠実性原則では，ユーザーの注意を引くためにカウントダウンタイマーを積極的に使用することが推奨される。",
+            "アクセシビリティ原則は，デジタルリテラシーの高いユーザーのみを対象としている。"
+        ],
+        answer: 1,
+        explanation: "対称性原則では，「Click to subscribe, call to cancel」問題の解決を目的とし，登録と解約が同等の容易さで行えることを求めます。透明性は「明確かつ平易な言葉」での明示，誠実性は虚偽の緊急性等の排除，アクセシビリティはあらゆるユーザーが利用できるインクルーシブな設計を求めます。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "スラッジの倫理的問題に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "スラッジは「時間税」として機能し，時間的余裕のない低所得層により重い負担を課す。",
+            "煩雑な手続きは，時間的・認知的資源の乏しい層に不均衡な負担を課す逆進性がある。",
+            "スラッジによる形式的平等は，実質的には脆弱層に不均衡な負担を課す点でロールズの正義に反する。",
+            "スラッジは常に悪いものであり，「良いスラッジ」は存在しない。"
+        ],
+        answer: 3,
+        explanation: "「良いスラッジ」あるいは「有益な手間（Beneficial Friction）」は存在します。例えば，高額送金前の確認画面（熟慮の促進），2要素認証（セキュリティ保護）などは，ユーザーの利益になる適切な摩擦です。重要なのは，手間をゼロにすることではなく，ユーザーの自律的意思決定を支援する目的で適切に配置することです。"
+    },
+    // 第13講: リバタリアンパターナリズム
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "リバタリアンパターナリズムは，（ A ）を維持しながら，より良い選択へと「ナッジ」する考え方である。一方，（ B ）は，個人の利益のために本人の意思に反してでも介入することが正当化されるという立場を指す。\n\n選択肢：①選択の自由 ②経済的効率性 ③パターナリズム ④リバタリアニズム ⑤功利主義 ⑥社会契約",
+        options: [
+            "A：① B：③",
+            "A：② B：④",
+            "A：① B：⑤",
+            "A：④ B：⑥"
+        ],
+        answer: 0,
+        explanation: "リバタリアンパターナリズムは，選択の自由を維持しながら（リバタリアン的側面），より良い選択へとナッジする（パターナリズム的側面）考え方です。純粋なパターナリズムは本人の意思に反してでも介入を正当化しますが，リバタリアンパターナリズムは選択肢を排除せず，緩やかな介入を行います。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "ナッジの倫理的課題に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "ナッジは選択肢を排除しないため，形式的には自由を侵害しないが，自律性を侵害する可能性がある。",
+            "Hansen & Jespersenの分類では，Type4（非透明・システム1）のナッジが最も倫理的に問題がある。",
+            "ナッジが許容される条件として，透明性，民主的統制，容易な回避可能性などが挙げられる。",
+            "ナッジは常に市民の能力を向上させるため，「幼児化効果」の心配は不要である。"
+        ],
+        answer: 3,
+        explanation: "Bovensは，ナッジには「幼児化効果」があると警告しています。ナッジは人々が誘惑に直面し自力で克服する経験を通じて道徳的品性を構築する機会を奪う可能性があります。Gigerenzerも「ナッジは人間をいつまでも補助輪が必要な子供のように扱っている」と批判しています。ブーストと組み合わせて市民の能力構築を目指すことが推奨されます。"
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let selectedAnswer = null;
+let answered = false;
+
+function startQuiz() {
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizCard').classList.remove('hidden');
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = questions[currentQuestion];
+
+    document.getElementById('progressFill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+    document.getElementById('questionNumber').textContent = `問題 ${currentQuestion + 1} / ${questions.length}`;
+
+    const typeEl = document.getElementById('questionType');
+    typeEl.textContent = q.typeLabel;
+    typeEl.className = 'question-type';
+    if (q.type === 'correct') typeEl.classList.add('type-correct');
+    else if (q.type === 'incorrect') typeEl.classList.add('type-incorrect');
+    else typeEl.classList.add('type-fill');
+
+    document.getElementById('questionText').innerHTML = q.question.replace(/\n/g, '<br>');
+
+    const optionsEl = document.getElementById('options');
+    optionsEl.innerHTML = '';
+
+    q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.textContent = `${idx + 1}. ${opt}`;
+        div.onclick = () => selectOption(idx);
+        optionsEl.appendChild(div);
+    });
+
+    document.getElementById('explanation').classList.remove('show');
+    document.getElementById('nextBtn').disabled = true;
+    selectedAnswer = null;
+    answered = false;
+}
+
+function selectOption(idx) {
+    if (answered) return;
+
+    const options = document.querySelectorAll('.option');
+    options.forEach(opt => opt.classList.remove('selected'));
+    options[idx].classList.add('selected');
+    selectedAnswer = idx;
+
+    checkAnswer();
+}
+
+function checkAnswer() {
+    if (selectedAnswer === null) return;
+
+    answered = true;
+    const q = questions[currentQuestion];
+    const options = document.querySelectorAll('.option');
+
+    options.forEach((opt, idx) => {
+        opt.classList.add('disabled');
+        if (idx === q.answer) {
+            opt.classList.add('correct');
+        } else if (idx === selectedAnswer) {
+            opt.classList.add('incorrect');
+        }
+    });
+
+    const isCorrect = selectedAnswer === q.answer;
+    if (isCorrect) score++;
+
+    const statusEl = document.getElementById('answerStatus');
+    statusEl.textContent = isCorrect ? '正解!' : '不正解';
+    statusEl.className = 'answer-status ' + (isCorrect ? 'correct' : 'incorrect');
+
+    document.getElementById('explanationText').textContent = q.explanation;
+    document.getElementById('explanation').classList.add('show');
+
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = false;
+    nextBtn.textContent = currentQuestion === questions.length - 1 ? '結果を見る' : '次の問題へ';
+}
+
+function nextQuestion() {
+    currentQuestion++;
+
+    if (currentQuestion >= questions.length) {
+        showResult();
+    } else {
+        showQuestion();
+    }
+}
+
+function showResult() {
+    document.getElementById('quizCard').classList.add('hidden');
+    document.getElementById('resultCard').classList.add('show');
+
+    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+
+    const percentage = (score / questions.length) * 100;
+    let message = '';
+    if (percentage >= 90) {
+        message = '素晴らしい！完璧な理解です！';
+    } else if (percentage >= 70) {
+        message = 'よくできました！もう少しで完璧です。';
+    } else if (percentage >= 50) {
+        message = '合格ライン！復習してさらに高得点を目指しましょう。';
+    } else {
+        message = '講義資料をもう一度確認して再挑戦しましょう。';
+    }
+    document.getElementById('resultMessage').textContent = message;
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    selectedAnswer = null;
+    answered = false;
+
+    document.getElementById('resultCard').classList.remove('show');
+    document.getElementById('quizCard').classList.remove('hidden');
+    showQuestion();
+}
+    </script>
+</body>
+</html>
