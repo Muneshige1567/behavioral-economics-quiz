@@ -223,6 +223,56 @@
             background: #ffebee;
             color: #c62828;
         }
+        .mode-selection {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        .mode-selection h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .mode-btn {
+            flex: 1;
+            max-width: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .mode-btn:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        .mode-btn.selected {
+            border-color: #667eea;
+            background: #ede7f6;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .mode-icon {
+            font-size: 1.8em;
+        }
+        .mode-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .mode-desc {
+            font-size: 0.8em;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -245,6 +295,23 @@
             </div>
 
             <p>全100問 / 正文選択・誤文選択・語句選択問題</p>
+
+            <div class="mode-selection">
+                <h3>出題モード</h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn selected" id="modeSequential" onclick="selectMode('sequential')">
+                        <span class="mode-icon">📋</span>
+                        <span class="mode-label">順番通り</span>
+                        <span class="mode-desc">問題1から順に出題</span>
+                    </button>
+                    <button class="mode-btn" id="modeRandom" onclick="selectMode('random')">
+                        <span class="mode-icon">🎲</span>
+                        <span class="mode-label">ランダム</span>
+                        <span class="mode-desc">シャッフルして出題</span>
+                    </button>
+                </div>
+            </div>
+
             <button class="btn btn-primary" onclick="startQuiz()">クイズを開始する</button>
         </div>
 
@@ -1675,18 +1742,47 @@ let currentQuestion = 0;
 let score = 0;
 let selectedAnswer = null;
 let answered = false;
+let quizMode = 'sequential';
+let shuffledQuestions = [];
+
+function selectMode(mode) {
+    quizMode = mode;
+    document.getElementById('modeSequential').classList.remove('selected');
+    document.getElementById('modeRandom').classList.remove('selected');
+    if (mode === 'sequential') {
+        document.getElementById('modeSequential').classList.add('selected');
+    } else {
+        document.getElementById('modeRandom').classList.add('selected');
+    }
+}
+
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 function startQuiz() {
+    if (quizMode === 'random') {
+        shuffledQuestions = shuffleArray(questions.map((q, idx) => ({ ...q, originalIndex: idx })));
+    } else {
+        shuffledQuestions = questions.map((q, idx) => ({ ...q, originalIndex: idx }));
+    }
     document.getElementById('startScreen').classList.add('hidden');
     document.getElementById('quizCard').classList.remove('hidden');
     showQuestion();
 }
 
 function showQuestion() {
-    const q = questions[currentQuestion];
+    const q = shuffledQuestions[currentQuestion];
 
-    document.getElementById('progressFill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
-    document.getElementById('questionNumber').textContent = `問題 ${currentQuestion + 1} / ${questions.length}`;
+    document.getElementById('progressFill').style.width = ((currentQuestion + 1) / shuffledQuestions.length * 100) + '%';
+    const originalNum = q.originalIndex + 1;
+    const modeLabel = quizMode === 'random' ? ` (元の問題${originalNum})` : '';
+    document.getElementById('questionNumber').textContent = `問題 ${currentQuestion + 1} / ${shuffledQuestions.length}${modeLabel}`;
 
     const typeEl = document.getElementById('questionType');
     typeEl.textContent = q.typeLabel;
@@ -1729,7 +1825,7 @@ function checkAnswer() {
     if (selectedAnswer === null) return;
 
     answered = true;
-    const q = questions[currentQuestion];
+    const q = shuffledQuestions[currentQuestion];
     const options = document.querySelectorAll('.option');
 
     options.forEach((opt, idx) => {
@@ -1753,13 +1849,13 @@ function checkAnswer() {
 
     const nextBtn = document.getElementById('nextBtn');
     nextBtn.disabled = false;
-    nextBtn.textContent = currentQuestion === questions.length - 1 ? '結果を見る' : '次の問題へ';
+    nextBtn.textContent = currentQuestion === shuffledQuestions.length - 1 ? '結果を見る' : '次の問題へ';
 }
 
 function nextQuestion() {
     currentQuestion++;
 
-    if (currentQuestion >= questions.length) {
+    if (currentQuestion >= shuffledQuestions.length) {
         showResult();
     } else {
         showQuestion();
@@ -1770,9 +1866,9 @@ function showResult() {
     document.getElementById('quizCard').classList.add('hidden');
     document.getElementById('resultCard').classList.add('show');
 
-    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+    document.getElementById('finalScore').textContent = `${score} / ${shuffledQuestions.length}`;
 
-    const percentage = (score / questions.length) * 100;
+    const percentage = (score / shuffledQuestions.length) * 100;
     let message = '';
     if (percentage >= 90) {
         message = '素晴らしい！完璧な理解です！';
@@ -1793,8 +1889,7 @@ function restartQuiz() {
     answered = false;
 
     document.getElementById('resultCard').classList.remove('show');
-    document.getElementById('quizCard').classList.remove('hidden');
-    showQuestion();
+    document.getElementById('startScreen').classList.remove('hidden');
 }
     </script>
 </body>
