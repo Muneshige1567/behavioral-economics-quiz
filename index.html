@@ -223,6 +223,22 @@
             background: #ffebee;
             color: #c62828;
         }
+        .range-btn {
+            padding: 12px 15px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .range-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -234,6 +250,9 @@
             <div class="quiz-info">
                 <h3>出題範囲</h3>
                 <ul style="text-align: left; padding-left: 20px;">
+                    <li>行動経済学の基礎（経済人vs限定合理性，二重過程理論）</li>
+                    <li>ヒューリスティクスとバイアス（利用可能性，代表性，アンカリング）</li>
+                    <li>プロスペクト理論と時間割引</li>
                     <li>ナッジの概要（NUDGES, BASIC, FEAST）</li>
                     <li>フィールド実験とEBPM</li>
                     <li>情報提供ナッジ・目的明示ナッジ</li>
@@ -244,8 +263,25 @@
                 </ul>
             </div>
 
-            <p>全100問 / 正文選択・誤文選択・語句選択問題</p>
-            <button class="btn btn-primary" onclick="startQuiz()">クイズを開始する</button>
+            <p>全120問 / 正文選択・誤文選択・語句選択問題</p>
+
+            <h3 style="margin: 20px 0 15px 0; color: #333;">出題範囲を選択</h3>
+            <div class="range-selector" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                <button class="range-btn" onclick="startQuizRange(0, 10)">問1-10</button>
+                <button class="range-btn" onclick="startQuizRange(10, 20)">問11-20</button>
+                <button class="range-btn" onclick="startQuizRange(20, 30)">問21-30</button>
+                <button class="range-btn" onclick="startQuizRange(30, 40)">問31-40</button>
+                <button class="range-btn" onclick="startQuizRange(40, 50)">問41-50</button>
+                <button class="range-btn" onclick="startQuizRange(50, 60)">問51-60</button>
+                <button class="range-btn" onclick="startQuizRange(60, 70)">問61-70</button>
+                <button class="range-btn" onclick="startQuizRange(70, 80)">問71-80</button>
+                <button class="range-btn" onclick="startQuizRange(80, 90)">問81-90</button>
+                <button class="range-btn" onclick="startQuizRange(90, 100)">問91-100</button>
+                <button class="range-btn" onclick="startQuizRange(100, 110)">問101-110</button>
+                <button class="range-btn" onclick="startQuizRange(110, 120)">問111-120</button>
+            </div>
+
+            <button class="btn btn-primary" onclick="startQuiz()">全問題に挑戦する（120問）</button>
         </div>
 
         <div class="card hidden" id="quizCard">
@@ -272,6 +308,7 @@
             <div class="score-label">正解数</div>
             <div class="result-message" id="resultMessage"></div>
             <button class="btn btn-primary" onclick="restartQuiz()">もう一度挑戦する</button>
+            <button class="btn btn-primary" onclick="backToStart()" style="background: #666; margin-top: 10px;">範囲選択に戻る</button>
         </div>
     </div>
 
@@ -1668,6 +1705,268 @@ const questions = [
         ],
         answer: 3,
         explanation: "「良いスラッジ」は存在します。意図的に摩擦を設けることで，衝動的で後悔しやすい決定を防ぐことができます。クーリングオフ期間，銃購入の待機期間，ギャンブルの自己排除プログラムなどが例です。ただし，スラッジの多くは企業や行政の都合で設けられ，市民に不利益をもたらすものであることに注意が必要です。"
+    },
+    // 第2講: 行動経済学の基礎
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "経済人（ホモ・エコノミカス）と限定合理的な人間の比較に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "経済人は認知や判断をたまに間違えるが，限定合理的な人間は完全に合理的である。",
+            "経済人は他人のことも考えるが，限定合理的な人間は自らの利益のみを追求する。",
+            "限定合理的な人間は自分を完全にはコントロールできず，短期的な自己利益を追求してしまうことがある。",
+            "限定合理的な人間は超合理的に行動し，長期的に不利益になることは決してしない。"
+        ],
+        answer: 2,
+        explanation: "限定合理的な人間は，そこまで合理的ではないが不合理でもなく，他人のことも考え，自分を完全にはコントロールできずに短期的な自己利益を追求してしまうことがあります。経済人（ホモ・エコノミカス）は超合理的に行動し，自らの利益のみを追求する存在として仮定されています。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "二重過程理論に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "システム1は意識的で低速な思考であり，システム2は無意識的で高速な反応である。",
+            "システム1は進化的に新しく人間のみに固有であり，システム2は進化的に古く動物と共有している。",
+            "システム1は自動的・感情的・高速な処理を行い，システム2は統制的・論理的・低速な処理を行う。",
+            "システム1は作業記憶のキャパシティに関連し，システム2は作業記憶とは独立している。"
+        ],
+        answer: 2,
+        explanation: "二重過程理論では，システム1は無意識的・自動的・感情的・高速で，進化的に古い処理システムです。システム2は意識的・統制的・論理的・低速で，進化的に新しく人間に固有の処理システムです。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "フレーミング効果に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "同じ内容であっても，表現方法によって受け取り方が変わることをフレーミング効果という。",
+            "ポジティブフレームでは確実な選択肢が好まれ，ネガティブフレームではリスクのある選択肢が好まれる傾向がある。",
+            "「脂身25%のひき肉」と「赤身75%のひき肉」は同じ内容だが，後者の方が好まれるのは属性フレームの例である。",
+            "フレーミング効果はシステム2による論理的思考の結果として生じる現象である。"
+        ],
+        answer: 3,
+        explanation: "フレーミング効果はシステム1による直感的な反応の結果として生じる現象です。論理的に考えれば同じ内容であることがわかりますが，表現方法によって直感的な印象が変わるため，判断が異なってしまいます。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "メンタルアカウンティング（心的会計）に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "メンタルアカウンティングでは，100円はどのような状況でも同じ100円の価値を持つと考える。",
+            "チケットを紛失した場合と現金を紛失した場合で，同額であっても心理的な影響が異なることがある。",
+            "メンタルアカウンティングは完全に合理的な意思決定を支援する仕組みである。",
+            "メンタルアカウンティングでは，金銭の総合評価が常に行われる。"
+        ],
+        answer: 1,
+        explanation: "メンタルアカウンティングとは，同じ金銭であっても目的や使途に応じて重要度を分類し，扱い方を変えることです。チケット紛失と現金紛失では心理的な財布が異なるため，同額でも判断が変わります。これは「100円は同じ100円の価値を持つ」という経済学の前提と矛盾します。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "過去に払ってしまってもう取り戻すことのできない費用を【　　　】といい，本来ならば将来の意思決定には無関係なはずのこの費用を考慮して非合理的な意思決定を行ってしまうことを【　　　】効果という。",
+        options: [
+            "機会費用，フレーミング",
+            "サンクコスト（埋没費用），サンクコスト",
+            "限界費用，アンカリング",
+            "固定費用，保有"
+        ],
+        answer: 1,
+        explanation: "サンクコスト（埋没費用）は過去に払ってしまってもう取り戻すことのできない費用です。サンクコスト効果とは，本来将来の意思決定には無関係なはずのサンクコストを考慮して非合理的な意思決定を行ってしまうことです。「コンコルドの誤り」がその典型例です。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "利用可能性ヒューリスティクスに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "利用可能性ヒューリスティクスとは，ある集合の特性をそのまま表していると考えて判断する方法である。",
+            "利用可能性ヒューリスティクスでは，思い出しやすい事例ほど頻度が高いと判断する傾向がある。",
+            "利用可能性ヒューリスティクスは常に正確な判断をもたらす。",
+            "利用可能性ヒューリスティクスは短期記憶のみに基づいて判断を行う。"
+        ],
+        answer: 1,
+        explanation: "利用可能性ヒューリスティクスとは，ある事象の出現頻度や確率を判断する際に，その事象が生じた事例を容易に思い出せるかどうかに基づいて判断することです。思い出しやすい事例（例：ニュースで報道された事故）は頻度が高いと過大評価される傾向があります。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "代表性ヒューリスティクスに関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "代表性ヒューリスティクスとは，わからないことを「代表例」をもとに推定してしまうことである。",
+            "リンダ問題は代表性ヒューリスティクスによる連言錯誤の例である。",
+            "標本サイズの無視は，代表性ヒューリスティクスに関連するバイアスの一つである。",
+            "代表性ヒューリスティクスを使えば，事前確率を正しく考慮した判断ができる。"
+        ],
+        answer: 3,
+        explanation: "代表性ヒューリスティクスを使うと，事前確率（基準率）を無視してしまう傾向があります。リンダ問題では，「銀行員」よりも「フェミニズム運動に参加している銀行員」の方が確率が高いと誤って判断してしまいます（連言錯誤）。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "コイントスで表が5回続けて出た後，「次は裏が出やすいはずだ」と考えてしまうことを【　　　】という。",
+        options: [
+            "確証バイアス",
+            "後知恵バイアス",
+            "ギャンブラーの誤謬",
+            "制御幻想"
+        ],
+        answer: 2,
+        explanation: "ギャンブラーの誤謬とは，大数の法則に基づかずに少数の法則に引っ張られ，次は予想通りになると捉えることです。コイントスの結果は独立事象であり，過去の結果は次の結果に影響しません。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "アンカリング効果に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "アンカリング効果は専門家には影響を与えない。",
+            "全く関係のない数字であっても，アンカーとして判断に影響を与えることがある。",
+            "アンカリング効果を避けるには，最初に提示された情報を完全に無視すればよい。",
+            "アンカリング効果は利得の場面でのみ生じ，損失の場面では生じない。"
+        ],
+        answer: 1,
+        explanation: "アンカリング効果は，不確実な事象について予測するとき，はじめにある値（アンカー）を設定し，そこから調整を行って最終的な予測値を確定する傾向です。不動産業者の実験でも示されたように，専門家でもアンカリング効果の影響を受けます。また，全く関係のない数字（例：野球選手の安打数）でも判断に影響を与えます。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "確証バイアスに関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "確証バイアスとは，自分の意見を裏付ける情報ばかり集める傾向である。",
+            "血液型性格診断を信じている人が，その型の人の行動をその性格特性として解釈するのは確証バイアスの例である。",
+            "確証バイアスは，アンカリング効果から生じることがある。",
+            "確証バイアスを持つ人は，反対する情報を積極的に探し，自分の意見を修正する傾向がある。"
+        ],
+        answer: 3,
+        explanation: "確証バイアスとは，一度自分の意見や態度を決めると，それを裏付ける情報ばかり集めて，反対する情報を無視したり，他の情報を自分の意見を補強する情報だと解釈するバイアスです。反対する情報を積極的に探すことはありません。"
+    },
+    // 第3講: プロスペクト理論と時間割引
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "期待効用理論に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "期待効用理論では，金額の期待値を計算して意思決定を行うと仮定する。",
+            "期待効用理論では，金銭から得られる効用（満足度）の期待値を計算して意思決定を行うと仮定する。",
+            "期待効用理論は行動経済学によって提唱された理論である。",
+            "期待効用理論は，人々が常にリスク志向的であることを仮定している。"
+        ],
+        answer: 1,
+        explanation: "期待効用理論は，フォン・ノイマンとモルゲンシュテルンによって提唱され，結果が不確実である時，人は「期待効用」を最大化するように行動すると仮定します。期待値ではなく，金銭から得られる効用（満足度）の期待値を計算して意思決定を行います。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "プロスペクト理論の価値関数には3つの性質があります。価値がある基準からの変化で測られることを【　　　】，利得も損失も値が大きくなるにつれて感応度が減少することを【　　　】といいます。",
+        options: [
+            "損失回避性，確実性効果",
+            "参照点依存性，感応度逓減性",
+            "曖昧性回避，劣確実性",
+            "現状維持バイアス，保有効果"
+        ],
+        answer: 1,
+        explanation: "プロスペクト理論の価値関数には，参照点依存性（価値は参照点からの変化で測られる），感応度逓減性（利得も損失も値が大きくなるにつれて感応度が減少する），損失回避性（同額の損失と利得があった場合，損失がもたらす不満足の方が大きい）の3つの性質があります。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "損失回避性に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "損失回避性とは，損失を完全に避けようとする傾向のことである。",
+            "損失回避性では，1万円の利得と1万円の損失は心理的に同じ大きさである。",
+            "損失回避性とは，同額の損失がもたらす不満足は，同額の利得がもたらす満足よりも大きく感じられることである。",
+            "損失回避性は，利得の場面でのみ観察される現象である。"
+        ],
+        answer: 2,
+        explanation: "損失回避性とは，同額の損失と利得があった場合，その損失がもたらす不満足は，同額の利得がもたらす満足よりも大きく感じられることです。一般的に，損失は利得の約2倍の心理的インパクトがあるとされています。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "保有効果（賦存効果）に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "保有効果とは，あるものを所有している場合に，それを持っていない場合よりも高く評価することである。",
+            "カーネマンらの実験では，マグカップを持っている人の売却希望価格は，購入希望価格より高かった。",
+            "WTA（受取意思額）とWTP（支払意思額）の乖離は保有効果の証拠である。",
+            "保有効果は損失回避性とは無関係な現象である。"
+        ],
+        answer: 3,
+        explanation: "保有効果は損失回避性と密接に関連しています。あるものを売却することは「損失」と感じられ，手に入れることは「利得」と感じられます。損失回避性により，損失を避けるために保有しているものを手放さない傾向が生じます。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "現状維持バイアスに関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "現状維持バイアスとは，常に新しい選択肢を好む傾向のことである。",
+            "現状維持バイアスは，損失回避性とは無関係に生じる。",
+            "現状維持バイアスとは，現状からの変化や移動を回避する傾向のことである。",
+            "現状維持バイアスは，選択肢が多いほど弱くなる。"
+        ],
+        answer: 2,
+        explanation: "現状維持バイアスとは，現状からの変化や移動を回避する傾向のことです。これは，現状から悪くなる（損失が発生する）可能性を気にする損失回避性と関連しています。サンクコスト効果や初期値効果も同様に解釈できます。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "時間割引に関して，一定の割合で価値を割り引く傾向を【　　　】といい，近い将来では大きく価値を割り引き遠い将来では小さく割り引く傾向を【　　　】という。",
+        options: [
+            "双曲割引，指数割引",
+            "線形割引，対数割引",
+            "指数割引，双曲割引",
+            "単純割引，複合割引"
+        ],
+        answer: 2,
+        explanation: "指数割引は一定の割合で価値を割り引く傾向で，経済学が前提とする合理的経済人の行動です。双曲割引は近い将来では大きく価値を割り引き，遠い将来では小さく割り引く傾向で，現実の人間の行動をよく説明します。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "時間整合性と時間非整合性に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "時間整合性とは，現在と将来を通して時間に対する選好が一貫していることである。",
+            "時間非整合性は双曲割引から導かれる傾向である。",
+            "1年後に受け取る金額と1年1週間後に受け取る金額の比較では将来志向だが，今日と1週間後では現在志向になるのは時間非整合性の例である。",
+            "双曲割引傾向にある人は，貯蓄計画を予定通り実行し，禁煙も容易に達成できる。"
+        ],
+        answer: 3,
+        explanation: "双曲割引傾向にある人は，遠い将来では将来志向だが近い将来では現在志向になるため，過去に立てた行動計画を実行する際に当初の計画通りには実行できません。貯蓄計画を後回しにしたり，禁煙・禁酒の計画をやめられなかったりします。"
+    },
+    {
+        type: "correct",
+        typeLabel: "正文選択問題",
+        question: "解釈レベル理論に関する以下の記述のうち，最も適切なものを選択してください。",
+        options: [
+            "時間的に遠い対象は低次レベル（具体的・表面的）に着目して評価される。",
+            "時間的に近い対象は高次レベル（抽象的・本質的）に着目して評価される。",
+            "時間的に遠い対象は高次レベル（抽象的・本質的）に着目して評価される。",
+            "解釈レベル理論は時間的距離に関係なく同じ評価を予測する。"
+        ],
+        answer: 2,
+        explanation: "解釈レベル理論では，時間的に離れた対象は高次レベル（抽象的・本質的・特徴的な点）に着目し，時間的に近い対象は低次レベル（具体的・表面的・些末的な点）に着目して評価されます。将来買う場合は高次の選好で，今すぐ買う場合は低次の選好で決まります。"
+    },
+    {
+        type: "fill",
+        typeLabel: "語句選択問題",
+        question: "経験を総合評価する際に，その最も強い部分と最後の部分の印象が極めて重要であることを【　　　】という。",
+        options: [
+            "初頭効果",
+            "系列位置効果",
+            "ピークエンド効果",
+            "プライミング効果"
+        ],
+        answer: 2,
+        explanation: "ピークエンド効果とは，個々の経験を総合して全体を評価するのではなく，その最も強い部分（ピーク）と最後の部分（エンド）の印象が極めて重要であることです。内視鏡検査の研究では，検査終了後に1分ほど放置してから抜いた方が検査全体の印象が向上しました。"
+    },
+    {
+        type: "incorrect",
+        typeLabel: "誤文選択問題",
+        question: "幸福研究に関する以下の記述のうち，誤っているものを1つ選びなさい。",
+        options: [
+            "所得が高い人の主観的幸福度は平均的に高い傾向がある。",
+            "所得と幸福度の相関関係には上限があり，一定以上の所得では幸福度の上昇が緩やかになる。",
+            "日本では1958年から1991年の間に所得が6倍になったが，生活満足度は大きく向上した。",
+            "外面的目標よりも本質的目標を持つ人の方が幸せである傾向がある。"
+        ],
+        answer: 2,
+        explanation: "日本では1958年から1991年の間に所得が6倍になりましたが，生活満足度に大きな変化はありませんでした。これは「イースタリンのパラドックス」として知られ，所得だけでは主観的幸福を説明できないことを示しています。野心の増加や社会的比較などの要因が影響しています。"
     }
 ];
 
@@ -1675,18 +1974,34 @@ let currentQuestion = 0;
 let score = 0;
 let selectedAnswer = null;
 let answered = false;
+let activeQuestions = questions;
+let questionOffset = 0;
 
 function startQuiz() {
+    activeQuestions = questions;
+    questionOffset = 0;
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('quizCard').classList.remove('hidden');
+    showQuestion();
+}
+
+function startQuizRange(start, end) {
+    activeQuestions = questions.slice(start, end);
+    questionOffset = start;
+    currentQuestion = 0;
+    score = 0;
     document.getElementById('startScreen').classList.add('hidden');
     document.getElementById('quizCard').classList.remove('hidden');
     showQuestion();
 }
 
 function showQuestion() {
-    const q = questions[currentQuestion];
+    const q = activeQuestions[currentQuestion];
 
-    document.getElementById('progressFill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
-    document.getElementById('questionNumber').textContent = `問題 ${currentQuestion + 1} / ${questions.length}`;
+    document.getElementById('progressFill').style.width = ((currentQuestion + 1) / activeQuestions.length * 100) + '%';
+    document.getElementById('questionNumber').textContent = `問題 ${questionOffset + currentQuestion + 1} / ${questionOffset + activeQuestions.length}（${currentQuestion + 1}/${activeQuestions.length}）`;
 
     const typeEl = document.getElementById('questionType');
     typeEl.textContent = q.typeLabel;
@@ -1729,7 +2044,7 @@ function checkAnswer() {
     if (selectedAnswer === null) return;
 
     answered = true;
-    const q = questions[currentQuestion];
+    const q = activeQuestions[currentQuestion];
     const options = document.querySelectorAll('.option');
 
     options.forEach((opt, idx) => {
@@ -1753,13 +2068,13 @@ function checkAnswer() {
 
     const nextBtn = document.getElementById('nextBtn');
     nextBtn.disabled = false;
-    nextBtn.textContent = currentQuestion === questions.length - 1 ? '結果を見る' : '次の問題へ';
+    nextBtn.textContent = currentQuestion === activeQuestions.length - 1 ? '結果を見る' : '次の問題へ';
 }
 
 function nextQuestion() {
     currentQuestion++;
 
-    if (currentQuestion >= questions.length) {
+    if (currentQuestion >= activeQuestions.length) {
         showResult();
     } else {
         showQuestion();
@@ -1770,9 +2085,9 @@ function showResult() {
     document.getElementById('quizCard').classList.add('hidden');
     document.getElementById('resultCard').classList.add('show');
 
-    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+    document.getElementById('finalScore').textContent = `${score} / ${activeQuestions.length}`;
 
-    const percentage = (score / questions.length) * 100;
+    const percentage = (score / activeQuestions.length) * 100;
     let message = '';
     if (percentage >= 90) {
         message = '素晴らしい！完璧な理解です！';
@@ -1795,6 +2110,19 @@ function restartQuiz() {
     document.getElementById('resultCard').classList.remove('show');
     document.getElementById('quizCard').classList.remove('hidden');
     showQuestion();
+}
+
+function backToStart() {
+    currentQuestion = 0;
+    score = 0;
+    selectedAnswer = null;
+    answered = false;
+    activeQuestions = questions;
+    questionOffset = 0;
+
+    document.getElementById('resultCard').classList.remove('show');
+    document.getElementById('quizCard').classList.add('hidden');
+    document.getElementById('startScreen').classList.remove('hidden');
 }
     </script>
 </body>
